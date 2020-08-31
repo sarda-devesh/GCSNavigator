@@ -24,10 +24,19 @@ full_file_path = os.path.join(bucket_path, relative_file_path)
 
 ### Downloading specific files 
 
-You can dowload specific files from the bucket if you don't want to download the entire bucket just to use a single file from the bucket. The functions takes in **a list of strings which contain the names of file we want to download** and the function returns a **dicitonary where the keys are all the files in the input parameter and the value is either the path to the file if the file exists or None if the file doesn't exist**. For example, assuming we have a bucket containing the files *testing.txt*, *testing1.txt* (which inside a folder called *basic1*), and *testing2.txt* (which is inside a folder called *basic2*) and if we run the following code: 
+You can dowload specific files from the bucket if you don't want to download the entire bucket just to use a single file from the bucket. The functions takes in **a list of strings which contain the names of file we want to download** and the function returns a **dicitonary where the keys are all the files in the input parameter and the value is either the path to the file if the file exists or None if the file doesn't exist**. For example, assuming we have a bucket having the following directory structure: 
 ```
-files_to_find = ['testing.txt','testing1.txt', 'testing2.txt', 'testing3.txt']
-file_paths = navigator.download_files(files_to_find)
+|---_basic1
+|   |---_testing1.txt
+|---_basic2
+|   |---_testing2.txt
+|---_testing.txt
+|---_basic3
+```
+and if we run the following code: 
+```
+files_to_download = ['testing.txt','testing1.txt', 'testing2.txt', 'testing3.txt']
+file_paths = navigator.download_files(files_to_download)
 ```
 The file_paths dictionary would look like this if we printed it out: 
 ```
@@ -39,4 +48,17 @@ The file_paths dictionary would look like this if we printed it out:
 
 ## Downloading specific folders
 
-We can download specific folders using the **download_folders** method which works similarily to the *download_files* method but rather than downloading specific files it downloads all the files inside the given folders. The function takes in **a list of strings which contains the name of the folders we want to download** and returns **a dicitonary where the keys are the names of all the folders and the value is either the path to the folder if the folder exists or None if the folder doesn't exist or the folder is empty**. All the folders that are downloaded have their directory structure preserved like in the *download_entire_bucket* function.
+We can download specific folders using the **download_folders** method which works similarily to the *download_files* method but rather than downloading specific files it downloads all the files inside the given folders. The function takes in **a list of strings which contains the name of the folders we want to download** and returns **a dicitonary where the keys are the names of all the folders and the value is either the path to the folder if the folder exists or None if the folder doesn't exist**. All the folders that are downloaded have their directory structure preserved like in the *download_entire_bucket* function. 
+
+If we have the same bucket structure as in the *downloading sepcific files* example and we run the following code: 
+```
+folders_to_download = ['basic1', 'basic2', 'basic3', 'basic4']
+folder_paths = navigator.download_folders(folders_to_download)
+```
+The folder_paths dictionary would look like this if we printed it out: 
+```
+{'basic1': '/tmp/sample-bucket-testing/basic1', 
+'basic2': '/tmp/sample-bucket-testing/basic2', 
+'basic3': '/tmp/sample-bucket-testing/basic3', 
+'basic4': None}
+```
