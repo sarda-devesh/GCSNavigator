@@ -16,7 +16,9 @@ class BucketNavigator():
             for index in range(len(broken) - 1): 
                 base_path = os.path.join(base_path, broken[index])
                 self.makefolder(base_path)
-            current_blob.download_to_filename(save_path)
+            #Only download the object if the blob object is a file
+            if('.' in save_path):
+                current_blob.download_to_filename(save_path)
         return save_path
 
     def makefolder(self, folder_path): 
@@ -66,7 +68,7 @@ class BucketNavigator():
         for blob in all_files:
             for folder_name in folder_names: 
                 if(folder_name in blob.name):
-                    #Ensures that the name is the name of a folder and not a file 
+                    #Ensures that the blob object is a folder
                     bucket_path = blob.name
                     folder_index = bucket_path.index(folder_name)
                     if(seperator in bucket_path[folder_index: ]):
