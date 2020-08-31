@@ -65,11 +65,15 @@ class BucketNavigator():
         all_files, starting_folder = self.starting_sequence()
         for blob in all_files:
             for folder_name in folder_names: 
-                if(folder_name in blob.name): 
-                    save_path = self.save_blob(blob, starting_folder)
-                    if(folder_paths[folder_name] == None): 
-                        folder_index = save_path.index(folder_name)
-                        path_to_folder = os.path.join( save_path[ : folder_index], folder_name)
-                        folder_paths[folder_name] = path_to_folder
-                    break
+                if(folder_name in blob.name):
+                    #Ensures that the name is the name of a folder and not a file 
+                    bucket_path = blob.name
+                    folder_index = bucket_path.index(folder_name)
+                    if(seperator in bucket_path[folder_index: ]):
+                        save_path = self.save_blob(blob, starting_folder)
+                        #Save path of folder if haven't saved a path for it before
+                        if(folder_paths[folder_name] == None): 
+                            relative_path_to_folder = os.path.join( bucket_path[ : folder_index], folder_name)
+                            folder_paths[folder_name] = os.path.join(starting_folder, relative_path_to_folder)
+                        break
         return folder_paths
