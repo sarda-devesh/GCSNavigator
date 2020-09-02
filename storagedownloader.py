@@ -14,8 +14,11 @@ class BucketNavigator():
         info = None 
         with open(path_to_servicekey) as source:
             info = json.load(source)
-        storage_credentials = service_account.Credentials.from_service_account_info(info)
-        storage_client = storage.Client(credentials=storage_credentials)
+        try: 
+            storage_credentials = service_account.Credentials.from_service_account_info(info)
+            storage_client = storage.Client(credentials=storage_credentials)
+        except Exception as e: 
+            raise ValueError("The credentials in the service key are not valid")
         try: 
             self.bucket = storage_client.get_bucket(bucket_name)
             self.bucket_name = bucket_name
