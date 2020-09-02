@@ -1,13 +1,26 @@
 import os 
+import json
 from google.cloud import storage
+from google.oauth2 import service_account
 
 seperator = '/'
 temp_folder = seperator + 'tmp'
 
 class BucketNavigator(): 
     
-    def __init__(self, bucket):
-        self.bucket_name = bucket
+    def __init__(self, bucket_name, path_to_servicekey):
+        if not os.path.exists(path_to_servicekey): 
+            raise ValueError("The path to service key (" + path_to_servicekey + ") doesn't exist")
+        info = None 
+        with open(path_to_servicekey) as source:
+            info = json.load(source)
+        storage_credentials = service_account.Credentials.from_service_account_info(info)
+        storage_client = storage.Client(credentials=storage_credentials)
+        try: 
+            self.bucket = storage_client.get_bucket(bucket_name)
+            self.bucket_name = bucket_name
+        except Exception as e: 
+            raise ValueError("A bucket with name " + bucket_name + " was not found")
 
     def save_blob(self, current_blob, base_path): 
         save_path = os.path.join(base_path, current_blob.name)
@@ -27,9 +40,8 @@ class BucketNavigator():
 
     def get_all_file_blobs(self): 
         storage_client = storage.Client()
-        bucket = storage_client.get_bucket(self.bucket_name)
         files = []
-        for blob in bucket.list_blobs():
+        for blob in self.bucket.list_blobs():
             files.append(blob)
         return files
     
